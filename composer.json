@@ -1,0 +1,9 @@
+{
+    "require": {
+        "vlucas/phpdotenv": "^5.4",
+        "web-token/jwt-easy": "^2",
+        "web-token/jwt-signature-algorithm-rsa": "^2.2",
+        "kodus/file-cache": "^1",
+        "guzzlehttp/guzzle": "^7.4"
+    }
+}

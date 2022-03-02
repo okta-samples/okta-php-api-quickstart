@@ -1,0 +1,4 @@
+.env
+vendor/
+cache/
+composer.lock

@@ -2,8 +2,8 @@
     "require": {
         "vlucas/phpdotenv": "^5.4",
         "guzzlehttp/guzzle": "^7",
-        "kodus/file-cache": "^1",
-        "web-token/jwt-easy": "^2",
-        "web-token/jwt-signature-algorithm-rsa": "^2"
+        "firebase/php-jwt": "^6.3",
+        "phpfastcache/phpfastcache": "^9.1",
+        "guzzlehttp/psr7": "^2.4"
     }
 }

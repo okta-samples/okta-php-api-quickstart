@@ -36,7 +36,7 @@ function whoami() {
   }
 
   header('Content-type: application/json');
-  echo json_encode($token->all());
+  echo json_encode($token);
 }
 
 function hello() {
@@ -55,36 +55,39 @@ function hasValidAccessToken() {
   $keys = getJWKS();
 
   try {
-    $jwt = \Jose\Easy\Load::jws($accessToken)
-      ->algs(['RS256'])
-      ->keyset($keys)
-      ->exp()
-      ->iat()
-      ->iss($_ENV['OKTA_OAUTH2_ISSUER'])
-      ->aud($_ENV['OKTA_AUDIENCE'])
-      ->run();
-      ;
+    $decoded = \Firebase\JWT\JWT::decode($accessToken, $keys);
   } catch(\Exception $e) {
+    echo $e->getMessage()."\n";
     return false;
   }
 
-  return $jwt->claims;
+  // Check the audience and issuer claims
+
+  if($decoded->iss != $_ENV['OKTA_OAUTH2_ISSUER'])
+    return false;
+
+  if($decoded->aud != $_ENV['OKTA_AUDIENCE'])
+    return false;
+
+  return $decoded;
 }
 
 function getJWKS() {
-  $cache = new \Kodus\Cache\FileCache(__DIR__.'/../cache/', 86400);
+  $httpClient = new \GuzzleHttp\Client();
+  $httpFactory = new \GuzzleHttp\Psr7\HttpFactory();
+  $cacheItemPool = \Phpfastcache\CacheManager::getInstance('files');
 
-  $cacheKey = 'okta-jwks';
+  $jwksUri = $_ENV['OKTA_OAUTH2_ISSUER'].'/v1/keys';
 
-  $jwks = $cache->get($cacheKey);
+  $keySet = new \Firebase\JWT\CachedKeySet(
+      $jwksUri,
+      $httpClient,
+      $httpFactory,
+      $cacheItemPool,
+      300,  // $expiresAfter int seconds to set the JWKS to expire
+      true  // $rateLimit    true to enable rate limit of 10 RPS on lookup of invalid keys
+  );
 
-  if(!$jwks) {
-    $client = new \GuzzleHttp\Client();
-    $response = $client->request('GET', $_ENV['OKTA_OAUTH2_ISSUER'].'/v1/keys');
-    $jwks = (string)$response->getBody();
-    $cache->set($cacheKey, $jwks);
-  }
-
-  return \Jose\Component\Core\JWKSet::createFromJson($jwks);
+  return $keySet;
 }
 

@@ -1,9 +1,12 @@
 {
     "require": {
-        "vlucas/phpdotenv": "^5.4",
-        "guzzlehttp/guzzle": "^7",
-        "firebase/php-jwt": "^6.3",
-        "phpfastcache/phpfastcache": "^9.1",
-        "guzzlehttp/psr7": "^2.4"
+        "php": "^8.1",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "vlucas/phpdotenv": "^5.7",
+        "guzzlehttp/guzzle": "^8.2",
+        "firebase/php-jwt": "^7.2",
+        "phpfastcache/phpfastcache": "^9.2",
+        "guzzlehttp/psr7": "^3.1"
     }
 }
